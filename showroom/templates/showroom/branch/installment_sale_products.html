@@ -1,0 +1,165 @@
+{% extends 'showroom/branch/base.html' %}
+{% block title %} Installment Sales | Product {% endblock %}
+{% load staticfiles %}
+{% block contain %}
+<div class="content-wrapper">
+	<section class="content-header">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="box">
+					{% if messages %}
+						{% for message in messages %}
+							<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+								{% if message.tags %} <h4>{{ message }}</h4>{% endif %}
+							</div>
+						{% endfor %}
+					{% endif %}
+
+					<div class="row">
+			            <div class="col-md-10">
+                            <div class="box-header">
+                                <h3 class="box-title">Sales Products By Installment</h3>
+                            </div>
+                        </div>
+                    </div>
+					
+					<form role="form" method="POST" enctype="multipart/form-data" > {% csrf_token %}
+						<table class="table table-striped table-bordered">
+                            <tr>
+                                <th> Select Customer </th>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                        <select class="form-control" name = "customer_id" required>
+                                            {% for data in customer_list %}
+                                                <option value="{{ data.id }}" >{{ data.name }}( {{data.mobile}} )</option>
+                                            {% endfor %}
+                                        </select>
+                                        </div> 
+                                        <div class="col-md-2" style="padding-left:0px;" >
+                                            <a class="btn" title = "Customer Registration" href="/customer-registration/"><i style="font-size:15px;" class="fa fa-plus-circle"></i></a>
+                                        </div>               
+                                    </div> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Invoice Number</th>
+                                <td>
+                                    <input type="text" class="form-control" name="invoice_number"  placeholder="Invoice Number"  required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Product Name</th>
+                                <td>
+                                    <input type="text" class="form-control" name="product_name" id="product_brand" placeholder="Product Name" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Brand Name</th>
+                                <td>
+                                    <input type="text" class="form-control" name="brand_name" id="product_brand" placeholder="Brand Name" required >
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Model Number</th>
+                                <td>
+                                    <input type="text" class="form-control" name="product_model_number" id="product_model" placeholder="Product Model" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Unit Price</th>
+                                <td>
+                                    <input type="number" class="form-control" name="unit_price_by_installment" id="unit_price_by_installment" value="0" placeholder="Unit Price" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Sale Quantity</th>
+                                <td>
+                                    <input type="number" class="form-control" name="sale_quantity" id="sale_quantity" value="1" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Total Price</th>
+                                <td>
+                                    <input type="number" class="form-control" name="total_price" id="total_price" placeholder="Total Price" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Cash Payment</th>
+                                <td class="date">
+                                    <input type="number" class="form-control" name="cash_payment" id="cash_payment" placeholder="Cash Payment" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Next Installment Date</th>
+                                <td>
+									<input type="date" class="form-control pull-right" value="{% now "Y-m-d" %}" name="next_installment_date"  placeholder="Next Installment Date" required>
+								</td>
+                            </tr>
+                            <tr>
+                                <th>Due Amount</th>
+                                <td>
+                                    <input type="number" class="form-control" name="due_amount" id="due_amount" placeholder="Due Amount" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>How many installments</th>
+                                <td>
+                                    <input type="number" class="form-control" name="total_installment" id="total_install" placeholder="How many installment" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Next Installment Amount</th>
+                                <td>
+                                    <input type="number" min="0" value="0" step="any" class="form-control" name="next_installment_amount" id="next_install_amount" placeholder="Next Installment Amount" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Sale Date</th>
+                                <td>
+									<input type="date" class="form-control pull-right" name="sale_date" value="{% now "Y-m-d" %}" placeholder="Sale Date" required>
+								</td>
+                            </tr>
+                            <tr>
+                                <th>Discription</th>
+                                <td>
+                                    <textarea type="text" rows="3" class="form-control" placeholder="Discription" name="discription"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    <input type="submit" value="Submit" class="btn btn-success">
+                                </td>
+                            </tr>
+                        </table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+	<script src="{% static 'showroom/admin/bower_components/jquery/dist/jquery.min.js' %}"></script>
+	<script>
+		
+		$('#unit_price_by_installment').change(function(){
+            $('#total_price').val(($('#sale_quantity').val()*$("#unit_price_by_installment").val()));
+        });
+        $('#sale_quantity').change(function(){
+            $('#total_price').val(($('#sale_quantity').val()*$("#unit_price_by_installment").val()));
+        });
+
+		$('#cash_payment').change(function(){
+			$('#due_amount').val($("#total_price").val()-$("#cash_payment").val());
+		});
+
+		$('#total_install').change(function(){
+			$('#next_install_amount').val($("#due_amount").val()/$("#total_install").val());
+		});
+        function setTwoNumberDecimal(event) {
+            this.value = parseFloat(this.value).toFixed(2);
+        }
+		
+	</script>
+{% endblock %}

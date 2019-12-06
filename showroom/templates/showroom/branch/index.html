@@ -1,0 +1,112 @@
+{% extends 'showroom/branch/base.html' %}
+{% block title %} My Panel {% endblock %}
+{% load staticfiles %}
+{% block contain %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1> Dashboard <small>Control panel</small> </h1>
+        <ol class="breadcrumb">
+            <li><a href="/my-dashboard/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-red"><i class="fa fa-money"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total Sale Amount</span>
+                        <span class="info-box-number" style="color:green;font-size:15px;">{{ total_sale_amount|floatformat:1 }} tk</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix visible-sm-block"></div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-green"><i class="fa fa-usd"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total installment Amount</span>
+                        <span class="info-box-number" style="color:green;font-size:15px;">{{ total_installment_amount|floatformat:1 }} Tk</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-yellow"><i class="fa fa-money"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Today Cash Sales</span>
+                        <span class="info-box-number" style="color:green;font-size:15px;">{{ today_cash_sales|floatformat:1 }} Tk</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-blue"><i class="fa fa-spinner"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total Due</span>
+                        <span class="info-box-number" style="color:green;font-size:15px;">{{ today_due|floatformat:1 }} Tk</span>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix visible-sm-block"></div>
+        </div>
+    </section>
+    {% if installment_list %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="box-header">
+                                <h3 class="box-title">Upcoming Installment List</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body" style="overflow-x:auto;"> 
+                        <table id="example1" class="table table-bordered table-hover">
+                            <thead>
+                                <tr style="font-size:13px;">
+                                    <th>SL</th>
+                                    <th>Product Name</th>
+                                    <th>Customer</th>
+                                    <th style="text-align:center">Qty</th>
+                                    <th style="text-align:right;">Unit Price</th>
+                                    <th style="text-align:right;">Total</th>
+                                    <th style="text-align:right;">Next Install. Amount</th>
+                                    <th style="text-align:right;">Next Install. Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in installment_list|slice:"10" %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{data.product_name}}</td>
+                                        <td>{{data.customer}}</td>
+                                        <td style="text-align:center">{{data.sale_quantity}}</td>
+                                        <td style="text-align:right;">{{data.sale_unit_price}}</td>
+                                        <td style="text-align:right;">{{data.total_price}}</td>
+                                        <td style="text-align:right;">{{data.next_installment_amount|floatformat:2}} Tk</td>
+                                        <td style="text-align:right;">{{data.next_installment_date|date:"M-d, Y"}}</td>
+                                        <td>
+                                            <a href="/{{ data.id }}/installment-details/" class="btn btn-info" title="Pay"><i class="fa fa-dollar"></i></a>  
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

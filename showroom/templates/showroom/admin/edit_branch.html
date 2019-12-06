@@ -1,0 +1,209 @@
+{% extends 'showroom/admin/base.html' %}
+{% block title %} Edit Product {% endblock %}
+{% load staticfiles %}
+{% block contain %}
+<style>
+	.namecolor label{
+	color: #009688 !important;
+	font-weight: bold !important;
+	}
+	.container {
+		display: block;
+		position: relative;
+		padding-left: 35px;
+		margin-bottom: 12px;
+		cursor: pointer;
+		font-size: 16px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	.container input {
+		position: absolute;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.checkmark {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 25px;
+		width: 25px;
+		background-color: #cccdce;
+		border-radius: 50%;
+	}
+	.container:hover input ~ .checkmark {
+		background-color: #ccc;
+	}
+
+	.container input:checked ~ .checkmark {
+		background-color: #2196F3;
+	}
+
+	.checkmark:after {
+		content: "";
+		position: absolute;
+		display: none;
+	}
+
+	.container input:checked ~ .checkmark:after {
+		display: block;
+	}
+
+	.container .checkmark:after {
+		top: 9px;
+		left: 9px;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: white;
+	}
+
+</style>
+
+<div class="content-wrapper">
+    <section class="content-header"><br>
+        <ol class="breadcrumb">
+            <li><a href="/dashboard/"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Edit Brance</li>
+        </ol>
+    </section>
+
+	<section class="content">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="box">
+					{% if messages %}
+						{% for message in messages %}
+							<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+								{% if message.tags %} <h4>{{ message }}</h4>{% endif %}
+							</div>
+						{% endfor %}
+					{% endif %}
+
+					<div class="row">
+			            <div class="col-md-4">
+                            <div class="box-header">
+                                <h3 class="box-title">Edit Brance</h3>
+                            </div>
+                        </div>
+			            <div class="col-md-8 text-right">
+                            <div class="box-header">
+                                <a href="/branch-list/"><h3 class="box-title"><i class="fa fa-caret-right"></i> Go to Brance list</h3></a>
+                            </div>
+                        </div>
+                    </div>
+					
+					<form role="form" method="POST"> {% csrf_token %}
+						<div class="box-body">
+							<div class="form-group namecolor">
+								<label for="exampleInputEmail1">Brance Name :</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-plus-circle"></i>
+									</div>
+									<input type="text" class="form-control" value="{{ edit_branch.branch_name }}" name="brance_name" placeholder="Brance Name" required>
+								</div>
+							</div>
+							
+							<div class="form-group namecolor">
+								<label for="exampleInputEmail1">Proprietor Name :</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-plus-circle"></i>
+									</div>
+									<input type="text" class="form-control" value="{{ edit_branch.proprietor_name }}" name="proprietor_name" placeholder="Proprietor Name" required>
+								</div>
+							</div>
+
+							<div class="form-group namecolor">
+								<label for="exampleInputEmail1">Username :</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-user-o"></i>
+									</div>
+									<input type="text" class="form-control" value="{{ edit_branch.user_name }}" name="username" placeholder="Username" required>
+								</div>
+							</div>
+
+							<div class="form-group namecolor">
+								<label for="exampleInputEmail1">Email :</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-envelope"></i>
+									</div>
+									<input type="email" class="form-control" value="{{ edit_branch.email }}" name="email" placeholder="Email" >
+								</div>
+							</div>
+
+							<div class="form-group namecolor">
+								<label for="exampleInputEmail1">Mobile :</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-phone"></i>
+									</div>
+									<input type="text" class="form-control" value="{{ edit_branch.mobile }}" name="mobile" placeholder="Mobile" >
+								</div>
+							</div>
+
+							<div class="form-group namecolor">
+								<label for="exampleInputEmail1">Staring Year :</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-mobile"></i>
+									</div>
+									<input type="number" class="form-control" value="{{ edit_branch.staring_year }}" name="staring_year" placeholder="Staring Year" required>
+								</div>
+							</div>
+
+							<div class="form-group namecolor">
+								<label for="exampleInputEmail1">Address :</label>
+								<div class="input-group">
+									<div class="input-group-addon">
+										<i class="fa fa-address-card-o"></i>
+									</div>
+									<textarea class="form-control" rows="2" name="address" placeholder="Address"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="box-footer">
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+	<script src="{% static 'recycle/admin/bower_components/jquery/dist/jquery.min.js' %}"></script>
+	<script>
+		$(function () {
+			$('#datepicker').datepicker({
+				autoclose: true
+			})
+			$('[data-mask]').inputmask()
+			//Timepicker
+			$('.timepicker').timepicker({
+				showInputs: false
+			})
+		})
+
+		$('#category_id').change(function(){
+        var url = '/sell-product/';
+        $.ajax({
+            url: url,
+            data: {
+                'category_id': $('#category_id :selected').val(),
+            },
+            success: function (data) {
+                if (data == "not_found") alert("No product available");
+                else {
+                    $("#price").val(data.price_per_kg);
+                }
+            }
+        });
+    });
+	</script>
+{% endblock %}

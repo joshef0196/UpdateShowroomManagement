@@ -1,0 +1,65 @@
+{% extends 'showroom/branch/base.html' %}
+{% block title %}Completed Installment List {% endblock %}
+{% load staticfiles %}
+{% block contain %}
+
+<div class="content-wrapper" >
+    <section class="content-header">
+      	<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+                    {% if messages %}
+						{% for message in messages %}
+							<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+								{% if message.tags %} <h4>{{ message }}</h4>{% endif %}
+							</div>
+						{% endfor %}
+					{% endif %}
+					
+					<div class="box-body" style="overflow-x:auto;"> 
+                        {% if complated_list %}
+                            <table id="example1" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr style="font-size:13px;">
+                                        <th>SL</th>
+                                        <th>Product Name</th>
+                                        <th>Customer</th>
+                                        <th style="text-align:center">Qty</th>
+                                        <th style="text-align:right;">Unit Price</th>
+                                        <th style="text-align:right;">Due</th>
+                                        <th style="text-align:right;">Total</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for data in complated_list %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{data.product_name}}</td>
+                                            <td>{{data.customer}}</td>
+                                            <td style="text-align:center">{{data.sale_quantity}}</td>
+                                            <td style="text-align:right;">{{data.sale_unit_price}}</td>
+                                            <td style="text-align:right;">{{data.due_amount|floatformat:2}}</td>
+                                            <td style="text-align:right;">{{data.total_price}}</td>
+                                            {% if data.due_amount %}
+                                                <td>
+                                                    <a href="/{{ data.id }}/installment-details/" class="btn btn-info" title="Pay"><i class="fa fa-dollar"></i></a>  
+                                                </td>
+                                            {% else %}
+                                                <td style="color:green;font-width:bold;">Already Paid</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% elif not product_list and request.POST %}
+                                <h2 style="color:red;text-align:center;">Not Found </h2>
+                        {% endif %}
+					</div>
+				</div>
+			</div>
+    	</div>
+	</section>
+</div>
+{% endblock %}

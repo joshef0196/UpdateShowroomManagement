@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load data_load %}
+    {% load staticfiles %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %} {% endblock %} </title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" >
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/font-awesome/css/font-awesome.min.css' %}">
+    <!-- Ionicons -->
+    {% comment %} <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/Ionicons/css/ionicons.min.css' %}"> {% endcomment %}
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'showroom/admin/dist/css/AdminLTE.css' %}">
+    <link rel="stylesheet" href="{% static 'showroom/admin/dist/css/style.css' %}">
+    {% comment %} <link rel="stylesheet" href="{% static 'showroom/admin/dist/css/AdminLTE.min.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'showroom/admin/dist/css/skins/_all-skins.min.css' %}">
+    <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/morris.js/morris.css' %}">
+    <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/jvectormap/jquery-jvectormap.css' %}">
+    <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/bootstrap-daterangepicker/daterangepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'showroom/admin/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css' %}">
+    <link rel="stylesheet" href="{% static 'showroom/admin/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="shortcut icon" href="{% static 'showroom/admin/img/R.png' %}">
+</head>
+<style>
+    .skin-blue .sidebar a:hover {
+        color: #fff !important;
+        background: #24414c !important;
+        border-color: #673AB7 !important;
+    }
+    .skin-blue .sidebar-menu >.skin-blue .sidebar-menu > li.active > a, .skin-blue .sidebar-menu > li.menu-open > a {
+        color: #fff;
+        background: #24414c !important;
+    }
+    .skin-blue .sidebar-menu > li > .treeview-menu {
+        margin: 0 1px;
+        background: #24414c !important;
+    }
+    .skin-blue .treeview-menu > li > a:hover {
+        background: #1d4756!important;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+</style>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <a href="/my-dashboard/" class="logo">
+                <span class="logo-mini"><b>R</b>E</span>
+                <span class="logo-lg">RakhiEnterprise</span>
+            </a>
+            <nav class="navbar navbar-static-top">
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Menu</span>
+                </a>
+                
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user user-menu" style="padding-right:17px;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="{% static 'showroom/admin/img/userimage.jpg' %}" class="user-image" alt="No Image">
+                                <span class="hidden-xs">{{ request.session.proprietor_name }}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header">
+                                    <img src="{% static 'showroom/admin/img/userimage.jpg' %}" class="img-circle" alt="No Image">
+                                    <p> {{ request.session.proprietor_name }}</p>
+                                    <small style="color:rgba(255,255,255,0.8);font-size: 16px;"> {{ request.session.branch_name }}</small>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="/change-password/" class="btn btn-default btn-flat">Change password</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="/signout/" class="btn btn-default btn-flat">Logout</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="src">
+                    <form class="form-inline my-2 my-lg-0" action="/customer-product-list/" method="POST"> {% csrf_token %}
+                        <div class="src2">
+                            <input type="text" style="width: 400px;" id="search" class="form-control" name="search" aria-label="Search" {% if search %} value="{{ search }}" {% endif %} placeholder = "Customer Name/Mobile/Invoice/Email/NID/Product Name" Title="Customer Name/Mobile/Invoice/Email/NID/Product Name">
+                            <select class="form-control" style="width:130px;" name = "area_id">
+                                <option value="0" >Select</option>
+                                {% for data in area_details|area:request.session.id %}
+                                    <option value="{{ data.id }}" {% if area_id == data.id %} selected {% endif %}>{{ data.area_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button style="width:80px;" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </nav>
+        </header>
+        
+        <aside class="main-sidebar" style="background:#2c5871 !important;">
+            <section class="sidebar">
+                <div class="user-panel" style="border-bottom: 1px solid #5c5e9e;background: #3f537373;">
+                    <div class="pull-left image">
+                        <img src="{% static 'showroom/admin/img/userimage.jpg' %}" class="img-circle" alt="No Image">
+                    </div>
+                    <div class="pull-left info">
+                        <p>{{ request.session.proprietor_name }}</p>
+                    </div>
+                </div>
+
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li>
+                        <a href="/my-dashboard/">
+                            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-user-o"></i>
+                            <span>Customer Management</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <a href="/customer-registration/"><i class="fa fa-plus"></i> <span> Customer Registration</span></a>                       
+                            <li><a href="/customer-list/"><i class="fa fa-list"></i><span>Customer List</span></a></li> 
+                            <a href="/add-area/"><i class="fa fa-plus"></i> <span>Add Area</span></a>                       
+                            <li><a href="/area-list/"><i class="fa fa-list-ul"></i><span>Area List</span></a></li> 
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-cart-arrow-down"></i>
+                            <span>Sales</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/cash-sales-product/"><i class="fa fa-shopping-bag"></i><span>Cash Sale</span></a></li> 
+                            <li><a href="/installment-sales-product/"><i class="fa fa-shopping-bag"></i><span>Installment Sale</span></a></li> 
+                            <li><a href="/sold-product-list/"><i class="fa fa-list"></i><span>Sold List</span></a></li>
+                            <li><a href="/customer-product-list/"><i class="fa fa-list"></i><span>Customer Product List</span></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-money"></i>
+                            <span>Installment</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/installment-collection/"><i class="fa fa-check-square"></i><span>Installment Collection</span></a></li> 
+                            <li><a href="/installment-list/"><i class="fa fa-list"></i><span>Installment list</span></a></li>
+                            <li><a href="/completed-installment-list/"><i class="fa fa-list"></i><span>completed Installment list</span></a></li>
+                            <li><a href="/unpaid-list/"><i class="fa fa-spinner"></i><span>Unpaid List</span></a></li>
+                            <li><a href="/dateover-due-list/"><i class="fa fa-list"></i><span>Dateover Due List</span></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-files-o"></i>
+                            <span>Reports</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/daily-report/" target="_blank_"><i class="fa fa-hand-o-right"></i>Daily Report</a></li>
+                            <li><a href="/monthly-report/" target="_blank_" ><i class="fa fa-hand-o-right"></i>Monthly Report</a></li>
+                            <li><a href="/yearly-report/" target="_blank_" ><i class="fa fa-hand-o-right"></i>Yearly Report</a></li>
+                            <li><a href="/date-wise-report/" target="_blank_" ><i class="fa fa-hand-o-right"></i>Date Wise Report</a></li>
+                            <li><a href="/unpaid-report/" target="_blank_" ><i class="fa fa-hand-o-right"></i>Due Installment</a></li>
+                            <li><a href="/dateover-due-report/" target="_blank_"><i class="fa fa-hand-o-right"></i>Dateover Due Installment</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-cogs"></i>
+                            <span>Settings</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="/change-password/"><i class="fa fa-asterisk"></i>Change Password</a></li>  
+                            <li><a href="/signout/"><i class="fa fa-sign-out"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+        </aside>
+        
+        {% block contain %}
+
+        {% endblock  %}
+        
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2019 All rights reserved | Developed By<a href="https://www.pythonbd.com/" target="_blank_" title="Pythonbd" style="padding-left: 5px;">Pythonbd</a></strong>
+        </footer>
+        <div class="control-sidebar-bg"></div>
+    </div>
+
+    <!-- jQuery 3 -->
+    <script src="{% static 'showroom/admin/bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
+    <script> $.widget.bridge('uibutton', $.ui.button); </script>
+    <script src="{% static 'showroom/admin/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/plugins/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/jquery-knob/dist/jquery.knob.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/moment/min/moment.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/fastclick/lib/fastclick.js' %}"></script>
+    <script src="{% static 'showroom/admin/dist/js/adminlte.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/dist/js/pages/dashboard.js' %}"></script>
+    <script src="{% static 'showroom/admin/dist/js/demo.js' %}"></script>
+    <script src="{% static 'showroom/admin/plugins/iCheck/icheck.min.js' %}"></script>    
+    <script src="{% static 'showroom/admin/plugins/timepicker/bootstrap-timepicker.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'showroom/admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script> 
+    
+</body>
+</html>
