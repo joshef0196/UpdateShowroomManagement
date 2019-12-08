@@ -1,0 +1,165 @@
+{% extends 'showroom/branch/base.html' %}
+{% block title %} Edit Sale Product {% endblock %}
+{% load staticfiles %}
+{% block contain %}
+<div class="content-wrapper">
+	<section class="content-header">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="box">
+					{% if messages %}
+						{% for message in messages %}
+							<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+								{% if message.tags %} <h4>{{ message }}</h4>{% endif %}
+							</div>
+						{% endfor %}
+					{% endif %}
+
+					<div class="row">
+			            <div class="col-md-10">
+                            <div class="box-header">
+                                <h3 class="box-title">Edit Sale Products</h3>
+                            </div>
+                        </div>
+                    </div>
+					
+					<form role="form" method="POST" enctype="multipart/form-data" > {% csrf_token %}
+						<table class="table table-striped table-bordered">
+                            <tr>
+                                <th> Select Customer </th>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <select class="form-control" name = "customer_id" required>
+                                                <option value="{{ product_list.customer_id }}" selected>{{ product_list.customer }}</option>
+                                                {% for data in customer_list %}
+                                                    <option value="{{ data.id }}">{{ data.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>                
+                                    </div> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Invoice Number</th>
+                                <td>
+                                    <input type="text" class="form-control" name="invoice_number" value="{{ product_list.invoice }}"  placeholder="Invoice Number"  required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Product Name</th>
+                                <td>
+                                    <input type="text" class="form-control" name="product_name" value="{{ product_list.product_name }}" id="product_brand" placeholder="Product Name" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Brand Name</th>
+                                <td>
+                                    <input type="text" class="form-control" name="brand_name" value="{{ product_list.brand_name }}" id="product_brand" placeholder="Brand Name" required >
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Model Number</th>
+                                <td>
+                                    <input type="text" class="form-control" name="product_model_number" value="{{ product_list.product_model_number }}" id="unit_price_by_installment" placeholder="Product Model" required>
+                                </td>
+                            </tr>
+                            {% if product_list.product_list.sale_unit_price %}
+                                <tr>
+                                    <th>Unit Price</th>
+                                    <td>
+                                        <input type="number" class="form-control" name="unit_price_cash" value="{{ product_list.sale_unit_price }}" id="unit_price_by_installment" placeholder="Unit Price" required>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if product_list.sale_unit_price %}
+                                <tr>
+                                    <th>Unit Price</th>
+                                    <td>
+                                        <input type="number" class="form-control" name="unit_price_cash" id="unit_price_cash" value="{{ product_list.sale_unit_price }}" placeholder="Unit Price" required>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <th>Sale Quantity</th>
+                                <td>
+                                    <input type="number" class="form-control" name="sale_quantity" value="{{ product_list.sale_quantity }}" id="sale_quantity" value="1" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Total Price</th>
+                                <td>
+                                    <input type="number" class="form-control" name="total_price" id="total_price" value="{{ product_list.total_price|floatformat:2 }}" placeholder="Total Price" readonly>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>
+                                    <input type="hidden" class="form-control pull-right" {% if product_list.next_installment_date %} value="{{ product_list.next_installment_date|date:"Y-m-d" }}" {% else %} value="{% now "Y-m-d" %}" {% endif %} name="next_installment_date"  required>
+                                </td>
+                            </tr>
+                            {% if product_list.payment_type == "2" %}
+                                <tr>
+                                    <th>Next Installment Date</th>
+                                    <td>
+                                        <input type="date" class="form-control pull-right" {% if product_list.next_installment_date %} value="{{ product_list.next_installment_date|date:"Y-m-d" }}" {% else %} value="{% now "Y-m-d" %}" {% endif %} name="next_installment_date"  required>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% if product_list.due_amount %}
+                                <tr>
+                                    <th>Due Amount</th>
+                                    <td>
+                                        <input type="number" class="form-control" value="{{ product_list.due_amount|floatformat:2 }}" name="due_amount" id="due_amount" placeholder="Due Amount" readonly>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <th>Sale Date</th>
+                                <td>
+									<input type="date" class="form-control pull-right" {% if product_list.sale_date %} value="{{ product_list.sale_date|date:"Y-m-d" }}" {% else %} value="{% now "Y-m-d" %}" {% endif %} name="sale_date" required>
+								</td>
+                            </tr>
+                            <tr>
+                                <th>Discription</th>
+                                <td>
+                                    <textarea type="text" rows="3" class="form-control" placeholder="Discription" name="discription">{{ product_list.comment }}</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    <input type="submit" value="Update" class="btn btn-success">
+                                </td>
+                            </tr>
+                        </table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+	<script src="{% static 'showroom/admin/bower_components/jquery/dist/jquery.min.js' %}"></script>
+	<script>
+		
+		$('#unit_price_by_installment').change(function(){
+            $('#total_price').val(($('#sale_quantity').val()*$("#unit_price_by_installment").val()));
+        });
+        $('#sale_quantity').change(function(){
+            $('#total_price').val(($('#sale_quantity').val()*$("#unit_price_by_installment").val()));
+        });
+
+		$('#cash_payment').change(function(){
+			$('#due_amount').val($("#total_price").val()-$("#cash_payment").val());
+		});
+
+		$('#total_install').change(function(){
+			$('#next_install_amount').val($("#due_amount").val()/$("#total_install").val());
+		});
+        function setTwoNumberDecimal(event) {
+            this.value = parseFloat(this.value).toFixed(2);
+        }
+		
+	</script>
+{% endblock %}

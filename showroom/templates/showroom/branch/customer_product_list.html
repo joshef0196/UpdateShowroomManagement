@@ -23,7 +23,7 @@
                                 <tr>
                                     <td style="text-align:right;vertical-align:middle;">Search</td>
                                     <td>
-                                        <input type="text" id="search" class="form-control" name="search" {% if search %} value="{{ search }}" {% endif %} placeholder = "Customer Name/Mobile/Email/NID/Product Name">
+                                        <input type="text" id="search" class="form-control" name="search" {% if search %} value="{{ search }}" {% endif %} placeholder = "Customer Name/Invoice/Mobile/Email/NID/Product Name">
                                     </td>
                                     <td style="text-align:right;vertical-align:middle;">Area</td>
                                     <td>
@@ -53,7 +53,7 @@
                                         <th style="text-align:right;">Due</th>
                                         <th style="text-align:right;">Paid Amount</th>
                                         <th style="text-align:right;">Total Price</th>
-                                        <th>Action</th>
+                                        <th style="text-align:center;">Status</th>
                                     </tr>
                                 </thead>
 
@@ -74,7 +74,7 @@
                                                     <a href="/{{ data.id }}/installment-details/" class="btn btn-info" title="Pay"><i class="fa fa-dollar"></i></a>  
                                                 </td>
                                             {% else %}
-                                                <td style="color:green;font-width:bold;">Already Paid</td>
+                                                <td style="color:green;font-width:bold;width:8%;text-align:center;" title="Already Paid"><i class="fa fa-check-circle"></i></td>
                                             {% endif %}
                                         </tr>
                                     {% endfor %}

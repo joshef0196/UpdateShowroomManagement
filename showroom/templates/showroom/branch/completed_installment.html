@@ -53,8 +53,10 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            {% elif not product_list and request.POST %}
-                                <h2 style="color:red;text-align:center;">Not Found </h2>
+                        {% elif not product_list and request.POST %}
+                            <h2 style="color:red;text-align:center;">NO DATA FOUND</h2>
+                        {% else %}
+                            <h2 style="color:red;text-align:center;">NO DATA</h2>
                         {% endif %}
 					</div>
 				</div>

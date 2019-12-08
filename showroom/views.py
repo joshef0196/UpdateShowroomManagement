@@ -12,6 +12,7 @@ from showroom.utils import render_to_pdf
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.utils.dateparse import parse_date, parse_datetime
+from django.core.paginator import Paginator
 
 def index(request):
     if not request.session['usertype'] == "admin":
@@ -143,7 +144,7 @@ def branch_dashboard(request):
     area_list    = models.Area.objects.filter(branch_id = int(request.session['id']), status = True).order_by("-id")
     if request.is_ajax():
         search_by = (request.GET.get('search')).strip()
-        product_list = models.SaleProducts.objects.values("product_name","invoice","customer_id__name", "customer_id__mobile","sale_quantity","sale_unit_price","total_price").filter(Q(customer_id__name__icontains = search_by)|Q(customer_id__name__icontains = search_by)|Q(invoice = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
+        product_list = models.SaleProducts.objects.values("product_name","invoice","customer_id__name", "customer_id__mobile","sale_quantity","sale_unit_price","total_price").filter(Q(customer_id__name__icontains = search_by)|Q(invoice__icontains = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
         if not product_list: product_list = "not_found"   
         return JsonResponse(list(product_list), safe = False, content_type='application/json; charset=utf8')
 
@@ -152,7 +153,7 @@ def branch_dashboard(request):
         area_id   = int(request.POST['area_id'])
 
         if area_id == 0 and len(str(search_by)) > 0:
-            product_list = models.SaleProducts.objects.filter(Q(customer_id__name__icontains = search_by)|Q(invoice = search_by)|Q(customer_id__email__icontains = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
+            product_list = models.SaleProducts.objects.filter(Q(customer_id__name__icontains = search_by)|Q(invoice__icontains = search_by)|Q(customer_id__email__icontains = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
 
         else:
             product_list = models.SaleProducts.objects.filter(customer_id__area_id = area_id, branch_id = int(request.session['id']), status = True).order_by("-id")
@@ -253,6 +254,46 @@ def cash_selling_product(request):
     }
     return render(request,'showroom/branch/cash_sale_products.html',context)
 
+def edit_product(request, id):
+    if not request.session['id']:
+        return redirect('/login/')
+    product_list     = models.SaleProducts.objects.filter(id = id ).first()
+    if request.method=="POST":
+        customer_id          = int(request.POST['customer_id'])
+        product_name         = request.POST['product_name']
+        invoice_number       = request.POST['invoice_number']
+        brand_name           = request.POST['brand_name']
+        product_model_number = request.POST['product_model_number']
+        unit_price_cash      = request.POST['unit_price_cash']
+        sale_quantity        = request.POST['sale_quantity']
+        total_price          = request.POST['total_price']
+        discription          = request.POST['discription']
+        sale_date            = parse_date(str(request.POST['sale_date']))
+        next_installment_date= parse_date(str(request.POST['next_installment_date']))
+
+        if product_list.payment_type == "1":
+            if models.SaleProducts.objects.filter(branch_id = int(request.session['id']), id = id).update(
+                invoice = invoice_number, branch_id = request.session['id'], customer_id = customer_id, product_name = product_name, brand_name = brand_name, sale_quantity = sale_quantity, sale_unit_price = unit_price_cash, 
+                product_model_number = product_model_number, total_price = total_price, comment = discription, sale_date = sale_date):
+                messages.success(request,"Successfully Updated.")
+            else:
+                messages.warning(request,'Enter valid value')
+        else :
+            if models.SaleProducts.objects.filter(branch_id = int(request.session['id']), id = id).update(
+                invoice = invoice_number, branch_id = request.session['id'], customer_id = customer_id, product_name = product_name, brand_name = brand_name, sale_quantity = sale_quantity, sale_unit_price = unit_price_cash, 
+                product_model_number = product_model_number, total_price = total_price, comment = discription, sale_date = sale_date, next_installment_date = next_installment_date):
+                messages.success(request,"Successfully Updated.")
+            else:
+                messages.warning(request,'Enter valid value')
+            
+        return redirect("/sold-product-list/")    
+    customer_list    = models.CustomerRegistration.objects.filter(status = True).exclude(id = product_list.customer_id)
+    context = {
+        'product_list': product_list,         
+        'customer_list': customer_list,         
+    }
+    return render(request,'showroom/branch/edit_product.html',context)
+
 def installment_selling_product(request):
     if not request.session['id']:
         return redirect('/login/')
@@ -300,6 +341,11 @@ def sold_product_list(request):
 
     if request.method=="POST":   
         product_list = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), payment_type = str(request.POST['payment_type']), status = True).order_by("-id")
+        paginator = Paginator(product_list, 20) # Show 25 data per page
+
+        page = request.GET.get('page')
+        product_list = paginator.get_page(page)
+
         context = {
             'payment_type' : str(request.POST['payment_type']),
             'product_list' : product_list,
@@ -307,6 +353,11 @@ def sold_product_list(request):
         return render(request,"showroom/branch/sold_product_list.html",context)
     else:    
         product_list = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), status = True).order_by("-id")[:50]
+        paginator = Paginator(product_list, 20) # Show 25 data per page
+
+        page = request.GET.get('page')
+        product_list = paginator.get_page(page)
+
         context = {
             'product_list' : product_list,
         }
@@ -326,7 +377,7 @@ def customer_product_list(request):
     area_list    = models.Area.objects.filter(branch_id = int(request.session['id']), status = True).order_by("-id")
     if request.is_ajax():
         search_by = (request.GET.get('search')).strip()
-        product_list = models.SaleProducts.objects.values("product_name","customer_id__name", "customer_id__mobile","sale_quantity","sale_unit_price","total_price").filter(Q(customer_id__name__icontains = search_by)|Q(customer_id__email__icontains = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
+        product_list = models.SaleProducts.objects.values("product_name","invoice","customer_id__name", "customer_id__mobile","sale_quantity","sale_unit_price","total_price").filter(Q(customer_id__name__icontains = search_by)|Q(invoice__icontains = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
         if not product_list: product_list = "not_found"   
         return JsonResponse(list(product_list), safe = False, content_type='application/json; charset=utf8')
 
@@ -335,8 +386,7 @@ def customer_product_list(request):
         area_id   = int(request.POST['area_id'])
 
         if area_id == 0 and len(str(search_by)) > 0:
-            product_list = models.SaleProducts.objects.filter(Q(customer_id__name__icontains = search_by)|Q(customer_id__email__icontains = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
-
+            product_list = models.SaleProducts.objects.filter(Q(customer_id__name__icontains = search_by)|Q(invoice__icontains = search_by)|Q(customer_id__email__icontains = search_by)|Q(customer_id__mobile__icontains = search_by)|Q(customer_id__mobile1__icontains = search_by)|Q(product_name__icontains = search_by), branch_id = int(request.session['id']), status = True).order_by("-id")
         else:
             product_list = models.SaleProducts.objects.filter(customer_id__area_id = area_id, branch_id = int(request.session['id']), status = True).order_by("-id")
         context = {
@@ -379,12 +429,13 @@ def installment_details(request, id):
 
     product = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), id = id)
     if request.method=="POST":   
-        installment_amount = float(request.POST['installment_amount'])
+        installment_amount      = float(request.POST['installment_amount'])
+        next_installment_amount = float(request.POST['next_installment_amount'])
         next_installment_date = parse_date(request.POST['next_installment_date'])
         collection_date = parse_date(request.POST['collection_date'])
         
         if product and product[0].due_amount > 0:
-            models.SaleProducts.objects.filter(branch_id = int(request.session['id']), id = id).update(due_amount = F("due_amount") - installment_amount, next_installment_amount = installment_amount, next_installment_date = next_installment_date)
+            models.SaleProducts.objects.filter(branch_id = int(request.session['id']), id = id).update(due_amount = F("due_amount") - installment_amount, next_installment_amount = next_installment_amount, next_installment_date = next_installment_date)
             product = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), id = id)
             if product[0].due_amount <= 0:
                 product.update(due_amount = 0, next_installment_date = None)
