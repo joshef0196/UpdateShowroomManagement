@@ -1,5 +1,5 @@
 {% extends 'showroom/branch/base.html' %}
-{% block title %} Category List {% endblock %}
+{% block title %} Customer List {% endblock %}
 {% load staticfiles %}
 {% block contain %}
 
@@ -16,58 +16,75 @@
 							</div>
 						{% endfor %}
 					{% endif %}
-                    <div class="row">
-			            <div class="col-md-4">
-                            <div class="box-header">
-                                <h3 class="box-title">Customer List</h3>
-                            </div>
-                        </div>
-			            <div class="col-md-8 text-right">
-                            <div class="box-header">
-                                <a href="/customer-registration/"><h3 class="box-title"><i class="fa fa-caret-right"></i>Customer Registration</h3></a>
-                            </div>
-                        </div>
-                    </div>
-					
-					<div class="box-body" style="overflow-x:auto;">
-						<table id="example1" class="table table-bordered table-hover">
-							<thead>
-                                <tr style="font-size:13px;">
-                                    <th>SL</th>
-                                    <th>Name</th>
-                                    <th>Mobile</th>
-                                    <th>Customer Image</th>
-                                    <th>Area</th>
-                                    <th>Present Address</th>
-                                    <th>Ref. Person</th>
-                                    <th>Reg. Date</th>
-                                    <th>Action</th>
+                    <div class="box-body" style="overflow-x:auto;">
+			            <form role="form" method="POST"> {% csrf_token %}
+                            <table id="example1" class="table table-bordered table-hover">
+                                <tr>
+                                    <td style="text-align:right;vertical-align:middle;">Search</td>
+                                    <td>
+                                        <input type="text" id="search" class="form-control" name="customer_search" {% if search_by %} value="{{ search_by }}" {% endif %} placeholder = "Customer Name/Mobile/Email/NID">
+                                    </td>
+                                    <td style="text-align:right;vertical-align:middle;">Area</td>
+                                    <td>
+                                        <select class="form-control" name = "area_id">
+                                            <option value="0" >Select</option>
+                                            {% for data in area_list %}
+                                                <option value="{{ data.id }}" {% if area == data.id %} selected {% endif %}>{{ data.area_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="submit" class="btn btn-success" value="Search">
+                                    </td>
                                 </tr>
-                            </thead>
-
-                            <tbody>
-                                {% for data in customer_list %}
-                                    <tr>
-                                        <td>{{forloop.counter}}</td>
-                                        <td><a href="/profile/{{ data.id }}" class="small-box-footer" style="padding-left: 0px;" title="{{ data.name }}">{{data.name}}</a></td>
-                                        <td>{{data.mobile}}</td>
-                                        {% if data.customer_image %}
-                                            <td><div class="user_image"><img src="/static/showroom/media/{{ data.customer_image }}" alt="" id="users_image" style="width:110px;height:60px;"></td>
-                                        {% else %}
-                                           <td>No Image</td>
-                                        {% endif %}
-                                        <td>{{data.area}}</td>
-                                        <td>{{data.present_address}}</td>
-                                        <td>{{data.reference_person}}</td>
-                                        <td>{{data.reg_date}}</td>
-                                        <td>
-                                            <a href="/edit-customer/{{ data.id }}/" class="btn btn-info" title="Edit {{data.name}}"><i class="fa fa-edit"></i></a> 
-                                        </td>
+                            <table>  
+                        </form>
+                    </div>
+                    <div class="box-body" style="overflow-x:auto;">
+                        <table id="example1" class="table table-bordered table-hover">
+                            {% if search_customer %}
+                                <thead>
+                                    <tr style="font-size:13px;">
+                                        <th>SL</th>
+                                        <th>Name</th>
+                                        <th>Mobile</th>
+                                        <th>Customer Image</th>
+                                        <th>Area</th>
+                                        <th>Present Address</th>
+                                        <th>Ref. Person</th>
+                                        <th>Reg. Date</th>
+                                        <th>Action</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-						</table>
-					</div>
+                                </thead>
+
+                                <tbody>
+                                    {% for data in search_customer %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td><a href="/profile/{{ data.id }}" class="small-box-footer" style="padding-left: 0px;" title="{{ data.name }}">{{data.name}}</a></td>
+                                            <td>{{data.mobile}}</td>
+                                            {% if data.customer_image %}
+                                                <td><div class="user_image"><img src="/static/showroom/media/{{ data.customer_image }}" alt="" id="users_image" style="width:110px;height:60px;"></td>
+                                            {% else %}
+                                            <td>No Image</td>
+                                            {% endif %}
+                                            <td>{{data.area}}</td>
+                                            <td>{{data.present_address}}</td>
+                                            <td>{{data.reference_person}}</td>
+                                            <td>{{data.reg_date}}</td>
+                                            <td>
+                                                <a href="/edit-customer/{{ data.id }}/" class="btn btn-info" title="Edit {{data.name}}"><i class="fa fa-edit"></i></a> 
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            {% elif not search_customer and request.POST %}
+                                <h2 style="color:red;text-align:center;">Not Found </h2>
+                            {% else %}
+                                <h2 style="color:red;text-align:center;">No Data</h2>
+                            {% endif %}
+                        </table>
+                    </div>
 				</div>
 			</div>
     	</div>

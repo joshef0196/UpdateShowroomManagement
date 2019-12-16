@@ -94,7 +94,7 @@
                             <tr>
                                 <th>Next Installment Date</th>
                                 <td>
-									<input type="date" class="form-control pull-right" value="{% now "Y-m-d" %}" name="next_installment_date"  placeholder="Next Installment Date" required>
+									<input type="date" class="form-control pull-right" value="{% now "Y-m-d" %}" name="next_installment_date" required>
 								</td>
                             </tr>
                             <tr>
@@ -118,7 +118,7 @@
                             <tr>
                                 <th>Sale Date</th>
                                 <td>
-									<input type="date" class="form-control pull-right" name="sale_date" value="{% now "Y-m-d" %}" placeholder="Sale Date" required>
+									<input type="date" class="form-control pull-right" name="sale_date" value="{% now "Y-m-d" %}"  required>
 								</td>
                             </tr>
                             <tr>
@@ -155,11 +155,8 @@
 		});
 
 		$('#total_install').change(function(){
-			$('#next_install_amount').val($("#due_amount").val()/$("#total_install").val());
+			$('#next_install_amount').val(parseFloat($("#due_amount").val()/$("#total_install").val()).toFixed(2));
 		});
-        function setTwoNumberDecimal(event) {
-            this.value = parseFloat(this.value).toFixed(2);
-        }
 		
 	</script>
 {% endblock %}

@@ -125,9 +125,9 @@ class InstallmentCollection(models.Model):
     customer                 = models.ForeignKey(CustomerRegistration, on_delete=models.CASCADE)
     product                  = models.ForeignKey(SaleProducts, on_delete=models.CASCADE)
     paid_amount              = models.FloatField(default=0)
-    due_date                 = models.DateTimeField(auto_now_add=False)
+    due_date                 = models.DateField(auto_now_add=False)
     total_installment        = models.IntegerField(default=0, blank = True)
-    payment_date             = models.DateTimeField(auto_now_add=False, blank = True)
+    payment_date             = models.DateField(auto_now_add=False, blank = True)
     status                   = models.BooleanField(default=True)
 
     def __str__(self):

@@ -1,7 +1,7 @@
 <html>
-     <head>
+     <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
          <title>Dateover Due Installment</title>
-         <meta charset="utf-8" />
+         
          {% load mathfilters %}
      </head>
      
@@ -34,12 +34,13 @@
                     <tr style="padding:3px;">
                         <th style="width:40px;text-align:center;font-size:9px;padding-top:3px;background-color:#ddd;width:5%;">SL</th>
                         <th style="text-align:left;font-size:9px;padding-left:3px;padding-top:3px;background-color:#ddd;width:20%;">Product Name</th>
+                        <th style="text-align:left;font-size:9px;padding-left:3px;padding-top:3px;background-color:#ddd;">Invoice</th>
                         <th style="text-align:left;font-size:9px;padding-left:3px;padding-top:3px;background-color:#ddd;">Customer Name</th>
                         <th style="text-align:left;font-size:9px;padding-left:3px;padding-top:3px;background-color:#ddd;">Customer Address</th>  
                         <th style="text-align:right;font-size:9px;padding-top:3px;padding-right:3px;background-color:#ddd;width:12%;">Total Price</th>
                         <th style="text-align:right;font-size:9px;padding-top:3px;padding-right:3px;background-color:#ddd;width:8%;">Due</th>
                         <th style="text-align:right;font-size:9px;padding-top:3px;padding-right:3px;background-color:#ddd;width:8%;">Paid</th>
-                        <th style="text-align:left;font-size:9px;padding-top:3px;padding-right:3px;background-color:#ddd;width:9%;">Previous Ins. Date</th>
+                        <th style="text-align:left;font-size:9px;padding-top:3px;padding-right:3px;background-color:#ddd;width:9%;">Pre. Ins. Date</th>
                         <th style="text-align:right;font-size:9px;padding-top:3px;padding-right:3px;background-color:#ddd;width:10%;">Previous Ins. Amount</th>
                         <th style="width:60px;text-align:left;font-size:9px;padding-left:3px;background-color:#ddd;width:9%;">Sale Date</th>
                     </tr>
@@ -50,6 +51,7 @@
                             <tr class="gradeX odd" role="row" style="padding:3px 3px 0px 3px;">
                                 <td style="text-align:center;font-size:8px;width:5%;">{{ forloop.counter }}</td>
                                 <td style="text-align:left;font-size:8px;padding-left:3px;padding-top:3px;width:15%;"> {{data.product_name}}</td>
+                                <td style="text-align:left;font-size:8px;padding-left:3px;padding-top:3px;width:8%;"> {{data.invoice}}</td>
                                 <td style="text-align:left;font-size:8px;padding-left:3px;padding-top:3px;width:20%;"> {{data.customer}}</td>
                                 <td style="text-align:left;font-size:8px;padding-left:3px;padding-top:3px;width:15%;"> {{data.customer.present_address}}</td>
                                 <td style="text-align:right;font-size:8px;width:10%;"> {{ data.total_price }} </td>

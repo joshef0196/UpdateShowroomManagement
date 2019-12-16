@@ -38,15 +38,21 @@
                                 <tr style="font-size:13px;">  
                                     <td style="text-align:right;">Profession</td> <td> {{ customer_details.profession }} </td>
                                 </tr>  
-                                <tr style="font-size:13px;">  
-                                    <td style="text-align:right;">Email</td> <td> {{ customer_details.email }} </td>
-                                </tr>  
-                                <tr style="font-size:13px;">
-                                    <td style="text-align:right;">Number</td> <td> {{ customer_details.mobile }} </td>
-                                </tr>  
+                                {% if customer_details.email %}
+                                    <tr style="font-size:13px;">  
+                                        <td style="text-align:right;">Email</td> <td> {{ customer_details.email }} </td>
+                                    </tr>  
+                                {% endif %}
+                                {% if customer_details.mobile %}
+                                    <tr style="font-size:13px;">
+                                        <td style="text-align:right;">Number</td> <td> {{ customer_details.mobile }} </td>
+                                    </tr>  
+                                {% endif %}
+                                {% if customer_details.mobile1 %}
                                 <tr style="font-size:13px;">
                                     <td style="text-align:right;">Another Number</td> <td> {{ customer_details.mobile1 }} </td>
-                                </tr>  
+                                </tr> 
+                                {% endif %} 
                                 <tr style="font-size:13px;">    
                                     <td style="text-align:right;">NID Number</td> <td> {{ customer_details.nid_number }} </td>
                                 </tr>  

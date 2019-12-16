@@ -34,10 +34,11 @@ urlpatterns = [
     path('completed-installment-list/',views.completed_installment_list),
     path('<int:id>/installment-details/',views.installment_details),
     # path('product-load/',views.load_product),
-    path('add-product/', views.add_product),
+    # path('add-product/', views.add_product),
     path('change-password/', views.change_password),
     path('unpaid-list/', views.unpaid_list),
     path('dateover-due-list/', views.dateover_due_list),
+    path('<int:id>/installment-view/', views.installment_view),
     # ................Report.......................
 
     # ....For Admin........
