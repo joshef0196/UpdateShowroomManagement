@@ -88,6 +88,23 @@
 				</div>
 			</div>
     	</div>
+        <div class="pagination">
+            <span class="step-links">
+                {% if search_customer.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ search_customer.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ search_customer.number }} of {{ search_customer.paginator.num_pages }}.
+                </span>
+
+                {% if search_customer.has_next %}
+                    <a href="?page={{ search_customer.next_page_number }}">Next</a>
+                    <a href="?page={{ search_customer.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
 	</section>
 </div>
 <script src="{% static 'recycle/admin/bower_components/jquery/dist/jquery.min.js' %}"></script>

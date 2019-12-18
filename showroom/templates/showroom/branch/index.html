@@ -95,6 +95,7 @@
                                         <td style="text-align:right;">{{data.next_installment_amount|floatformat:2}} Tk</td>
                                         <td style="text-align:right;">{{data.next_installment_date|date:"M-d, Y"}}</td>
                                         <td>
+                                            <a href="/{{ data.id }}/installment-view/" class="btn btn-primary" title="View Installment"><i class="fa fa-eye"></i></a>  
                                             <a href="/{{ data.id }}/installment-details/" class="btn btn-info" title="Pay"><i class="fa fa-dollar"></i></a>  
                                         </td>
                                     </tr>

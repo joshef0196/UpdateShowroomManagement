@@ -24,6 +24,7 @@
                                     <tr style="font-size:13px;">
                                         <th>SL</th>
                                         <th>Product Name</th>
+                                        <th>Invoice</th>
                                         <th>Customer</th>
                                         <th>Customer Address</th>
                                         <th style="width:10%;">Ins. Date</th>
@@ -38,6 +39,7 @@
                                         <tr>
                                             <td>{{forloop.counter}}</td>
                                             <td>{{data.product_name}}</td>
+                                            <td>{{data.invoice}}</td>
                                             <td>{{data.customer}}</td>
                                             <td>{{data.customer.present_address}}</td>
                                             <td>{{data.next_installment_date|date:"d, M Y"}}</td>
@@ -60,6 +62,23 @@
 				</div>
 			</div>
     	</div>
+        <div class="pagination">
+            <span class="step-links">
+                {% if product_list.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ product_list.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ product_list.number }} of {{ product_list.paginator.num_pages }}.
+                </span>
+
+                {% if product_list.has_next %}
+                    <a href="?page={{ product_list.next_page_number }}">Next</a>
+                    <a href="?page={{ product_list.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
 	</section>
 </div>
 {% endblock %}

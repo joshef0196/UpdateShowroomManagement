@@ -394,8 +394,13 @@ def customer_product_list(request):
             'area_id' : area_id,
         }
         return render(request,"showroom/branch/customer_product_list.html",context)
+
     else:    
         product_list = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), status = True).order_by("-id")[:50]
+        paginator = Paginator(product_list, 20) # Show 25 data per page
+
+        page = request.GET.get('page')
+        product_list = paginator.get_page(page)
         context = {
             'product_list' : product_list,
             'area_list' : area_list,
@@ -425,6 +430,7 @@ def installment_details(request, id):
     if not request.session['id']:
         return redirect('/login/')
 
+    view_installment = models.InstallmentCollection.objects.filter(branch_id = int(request.session['id']), product_id = id, status = True).order_by("payment_date")
     product = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), id = id)
     if request.method=="POST":   
         installment_amount      = float(request.POST['installment_amount'])
@@ -450,6 +456,7 @@ def installment_details(request, id):
         if product:
             context = {
                 'product' : product[0],
+                'view_installment' : view_installment,
             }
             return render(request,"showroom/branch/installment_details.html", context)
         else:
@@ -459,11 +466,23 @@ def installment_list(request):
     if not request.session['id']:
         return redirect('/login/')
     installment_list = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), payment_type = 2, due_amount__gt = 0, status = True).order_by("next_installment_date","due_amount")
-    
+    paginator = Paginator(installment_list, 20) # Show 25 data per page
+    page = request.GET.get('page')
+    installment_list = paginator.get_page(page)
     context = {
         'installment_list' : installment_list,
     }
     return render(request, 'showroom/branch/installment_list.html', context)
+
+def today_installment_list(request):
+    if not request.session['id']:
+        return redirect('/login/')
+    installment_list = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), payment_type = 2, due_amount__gt = 0, next_installment_date = datetime.datetime.strftime(datetime.datetime.now().date(),"%Y-%m-%d"), status = True).order_by("next_installment_date","due_amount")
+    
+    context = {
+        'installment_list' : installment_list,
+    }
+    return render(request, 'showroom/branch/today_installment_list.html', context)
 
 def installment_view(request, id):
     if not request.session['id']:
@@ -618,6 +637,10 @@ def customer_list(request):
         return render(request,"showroom/branch/customer_list.html",context)
     else :
         search_customer = models.CustomerRegistration.objects.filter(branch_id = int(request.session['id']), status = True)
+        paginator = Paginator(search_customer, 20) # Show 25 data per page
+
+        page = request.GET.get('page')
+        search_customer = paginator.get_page(page)
         context = {
             'search_customer' : search_customer,
             'area_list' : area_list,
@@ -674,49 +697,6 @@ def edit_area(request, id):
 
     return render(request,"showroom/branch/edit_area.html",context)
     
-# def add_product(request):
-#     if not request.session['id']:
-#         return redirect('/login/')
-#     brance_list      = models.Branches.objects.all()
-#     context={
-#         'brance_list' : brance_list,
-#     }
-#     if request.method=="POST":
-#         category_name               = request.POST['category_name']
-#         product_name                = request.POST['product_name']
-#         product_model_number        = request.POST['product_model_number']
-#         product_color               = request.POST['product_color']
-#         total_quantity              = request.POST['total_quantity']
-#         unit_price_by_cash          = request.POST['unit_price_by_cash']
-#         unit_price_by_installment   = request.POST['unit_price_by_installment']
-#         buy_price                   = request.POST['buy_price']
-#         maximum_discount            = request.POST['maximum_discount']
-#         discription                 = request.POST['discription']
-#         total_price                 = round((int(total_quantity)*float(unit_price_by_cash)),2)
-
-#         order_file1 = ""
-#         if bool(request.FILES.get('product_image', False)) == True:
-#             file = request.FILES['product_image']
-#             order_file1 = "product_image/"+file.name
-#             if not os.path.exists(settings.MEDIA_ROOT):
-#                 os.mkdir(settings.MEDIA_ROOT)
-#             if not os.path.exists(settings.MEDIA_ROOT+"product_image/"):
-#                 os.mkdir(settings.MEDIA_ROOT+"product_image/")
-#             default_storage.save(settings.MEDIA_ROOT+"product_image/"+file.name, ContentFile(file.read()))
-        
-#         if models.Product.objects.create(branch_id = int(request.session['id']), category_name_id = category_name, product_name = product_name, brand_name = request.session['id'],
-#                 product_image = order_file1, product_model_number = product_model_number, product_color = product_color, total_quantity = total_quantity, available_quantity = total_quantity,
-#                 unit_price_by_cash = unit_price_by_cash, unit_price_by_installment = unit_price_by_installment, buy_price = buy_price, maximum_discount = maximum_discount,
-#                 total_price = total_price, discription = discription
-#             ):
-#             messages.success(request,'Product added successfully!')
-#             return redirect("/add-product/")
-#         else:
-#             messages.error(request,"Please enter a valid value.") 
-#             return redirect("/add-product/")
-
-#     return render(request,"showroom/branch/add_product.html",context)
-
 def customer_details(request, id):
     if not request.session['id']:
         return redirect('/login/')
@@ -731,6 +711,9 @@ def unpaid_list(request):
         return redirect('/login/')
 
     product_list   = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), due_amount__gt = 0)
+    paginator = Paginator(product_list, 2) # Show 25 data per page
+    page = request.GET.get('page')
+    product_list = paginator.get_page(page)
     context={
         'product_list' : product_list,
     }
@@ -741,6 +724,9 @@ def dateover_due_list(request):
         return redirect('/login/')
 
     product_list   = models.SaleProducts.objects.filter(branch_id = int(request.session['id']), next_installment_date__lt = datetime.datetime.now().date(), due_amount__gt = 0)
+    paginator = Paginator(product_list, 20) # Show 25 data per page
+    page = request.GET.get('page')
+    product_list = paginator.get_page(page)
     context={
         'product_list' : product_list,
     }

@@ -31,6 +31,7 @@ urlpatterns = [
     path('customer-product-list/',views.customer_product_list),
     path('installment-collection/',views.installment_collection),
     path('installment-list/',views.installment_list),
+    path('today-installment-list/',views.today_installment_list),
     path('completed-installment-list/',views.completed_installment_list),
     path('<int:id>/installment-details/',views.installment_details),
     # path('product-load/',views.load_product),

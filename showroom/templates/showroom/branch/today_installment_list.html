@@ -29,7 +29,7 @@
                                         <th style="text-align:center">Qty</th>
                                         <th style="text-align:right;">Unit Price</th>
                                         <th style="text-align:right;">Due</th>
-                                        <th style="text-align:right;">Next Install. Date</th>
+                                        <th style="text-align:right;">Install. Date</th>
                                         <th style="text-align:right;">Total</th>
                                         <th style="text-align:center;">Action</th>
                                     </tr>
@@ -61,30 +61,13 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            {% elif not product_list and request.POST %}
-                                <h2 style="color:red;text-align:center;">Not Found </h2>
+                        {% else %}
+                            <h2 style="color:red;text-align:center;">There is no installment today.</h2>
                         {% endif %}
 					</div>
 				</div>
 			</div>
     	</div>
-        <div class="pagination">
-            <span class="step-links">
-                {% if installment_list.has_previous %}
-                    <a href="?page=1">&laquo; First</a>
-                    <a href="?page={{ installment_list.previous_page_number }}">Previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ installment_list.number }} of {{ installment_list.paginator.num_pages }}.
-                </span>
-
-                {% if installment_list.has_next %}
-                    <a href="?page={{ installment_list.next_page_number }}">Next</a>
-                    <a href="?page={{ installment_list.paginator.num_pages }}">Last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
 	</section>
 </div>
 {% endblock %}

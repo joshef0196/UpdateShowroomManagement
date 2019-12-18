@@ -47,6 +47,7 @@
                                     <tr style="font-size:13px;">
                                         <th>SL</th>
                                         <th>Product Name</th>
+                                        <th>Invoice</th>
                                         <th>Customer</th>
                                         <th>Bill Type</th>
                                         <th style="text-align:center;">Qty</th>
@@ -63,6 +64,7 @@
                                         <tr>
                                             <td>{{forloop.counter}}</td>
                                             <td>{{data.product_name}}</td>
+                                            <td>{{data.invoice}}</td>
                                             <td>{{data.customer}}</td>
                                             <td>{% if data.payment_type == "1" %} Cash {% else %} {{data.get_payment_type_display}} {% endif %}</td>
                                             <td style="text-align:center;">{{data.sale_quantity}}</td>
@@ -90,6 +92,23 @@
 				</div>
 			</div>
     	</div>
+        <div class="pagination">
+            <span class="step-links">
+                {% if product_list.has_previous %}
+                    <a href="?page=1">&laquo; First</a>
+                    <a href="?page={{ product_list.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ product_list.number }} of {{ product_list.paginator.num_pages }}.
+                </span>
+
+                {% if product_list.has_next %}
+                    <a href="?page={{ product_list.next_page_number }}">Next</a>
+                    <a href="?page={{ product_list.paginator.num_pages }}">Last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
 	</section>
 </div>
 {% endblock %}
